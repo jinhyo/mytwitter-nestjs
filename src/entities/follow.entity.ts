@@ -4,14 +4,19 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { StandardEntity } from './standard.entity';
 import { User } from './user.entity';
 
-@ObjectType()
 @Entity({ name: 'follows' })
-export class Follow extends StandardEntity {
+export class Follow {
+  @PrimaryColumn()
+  followerId: number;
+
+  @PrimaryColumn()
+  followingId: number;
+
   @CreateDateColumn()
   createdAt: Date;
 

@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Follow } from './follow.entity';
 import { StandardEntity } from './standard.entity';
+import { Tweet } from './tweet.entity';
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -43,4 +44,7 @@ export class User extends StandardEntity {
 
   @OneToMany(() => Follow, (follow) => follow.follower)
   followings: Follow[];
+
+  @OneToMany(() => Tweet, (tweet) => tweet.writer)
+  tweets: Tweet[];
 }
