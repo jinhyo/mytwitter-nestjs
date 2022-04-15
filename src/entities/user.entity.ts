@@ -4,6 +4,7 @@ import { Follow } from './follow.entity';
 import { Like } from './like.entity';
 import { StandardEntity } from './standard.entity';
 import { Tweet } from './tweet.entity';
+import { UserReweet } from './userRetweet.entity';
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -39,6 +40,9 @@ export class User extends StandardEntity {
   @Field(() => String)
   @Column()
   location: string;
+
+  @OneToMany(() => UserReweet, (userReweet) => userReweet.user)
+  userReweets: UserReweet[];
 
   @OneToMany(() => Follow, (follow) => follow.following)
   followers: Follow[];

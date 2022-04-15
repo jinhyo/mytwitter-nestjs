@@ -3,6 +3,7 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Like } from './like.entity';
 import { StandardEntity } from './standard.entity';
 import { User } from './user.entity';
+import { UserReweet } from './userRetweet.entity';
 
 @ObjectType()
 @Entity({ name: 'tweets' })
@@ -21,6 +22,9 @@ export class Tweet extends StandardEntity {
 
   @OneToMany(() => Like, (like) => like.tweet)
   likes: Like[];
+
+  @OneToMany(() => UserReweet, (userReweet) => userReweet.tweet)
+  userReweets: UserReweet[];
 
   @OneToMany(() => Tweet, (tweet) => tweet.retweetOrigin)
   rewteets: Tweet[];
