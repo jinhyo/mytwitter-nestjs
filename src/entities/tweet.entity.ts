@@ -6,6 +6,7 @@ import { User } from './user.entity';
 import { UserQuotedTweet } from './userQuotedTweet.entity';
 import { UserReweet } from './userRetweet.entity';
 import { TweetHashtag } from './tweetHashtag.entity';
+import { Image } from './image.entity';
 
 @ObjectType()
 @Entity({ name: 'tweets' })
@@ -21,6 +22,9 @@ export class Tweet extends StandardEntity {
   @Column()
   @Field(() => Number)
   retweetedCount: number;
+
+  @OneToMany(() => Image, (image) => image.tweet)
+  images: Image[];
 
   @OneToMany(() => TweetHashtag, (tweetHashtag) => tweetHashtag.tweet)
   tweetHashtags: TweetHashtag[];
