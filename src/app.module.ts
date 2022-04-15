@@ -6,6 +6,7 @@ import { MorganInterceptor, MorganModule } from 'nest-morgan';
 import { join } from 'path';
 import { DatabaseModule } from './modules/database/database.module';
 import { MyConfigModule } from './modules/my-config/my-config.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MyConfigModule } from './modules/my-config/my-config.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
+    UserModule,
   ],
   providers: [
     {
