@@ -1,8 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { Like } from './like.entity';
+import { UserLike } from './userLike.entity';
 import { StandardEntity } from './standard.entity';
 import { User } from './user.entity';
+import { UserQuotedTweet } from './userQuotedTweet.entity';
 import { UserReweet } from './userRetweet.entity';
 
 @ObjectType()
@@ -20,11 +21,14 @@ export class Tweet extends StandardEntity {
   @Field(() => Number)
   retweetedCount: number;
 
-  @OneToMany(() => Like, (like) => like.tweet)
-  likes: Like[];
+  @OneToMany(() => UserLike, (like) => like.tweet)
+  likes: UserLike[];
 
   @OneToMany(() => UserReweet, (userReweet) => userReweet.tweet)
   userReweets: UserReweet[];
+
+  @OneToMany(() => UserQuotedTweet, (userQuotedTweet) => userQuotedTweet.tweet)
+  userQuotedTweets: UserQuotedTweet[];
 
   @OneToMany(() => Tweet, (tweet) => tweet.retweetOrigin)
   rewteets: Tweet[];

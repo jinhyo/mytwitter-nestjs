@@ -9,8 +9,8 @@ import {
 import { Tweet } from './tweet.entity';
 import { User } from './user.entity';
 
-@Entity({ name: 'likes' })
-export class Like {
+@Entity({ name: 'user_qouted_tweets' })
+export class UserQuotedTweet {
   @PrimaryColumn()
   userId: number;
 
@@ -23,11 +23,11 @@ export class Like {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.likes)
+  @ManyToOne(() => User, (user) => user.userQuotedTweets)
   @JoinColumn()
   user: User;
 
-  @ManyToOne(() => Tweet, (tweet) => tweet.likes)
+  @ManyToOne(() => Tweet, (tweet) => tweet.userQuotedTweets)
   @JoinColumn()
   tweet: Tweet;
 }
