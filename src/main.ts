@@ -21,8 +21,8 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(5000, () =>
-    logger.log('Server is running on the port 5000'),
+  await app.listen(3000, () =>
+    logger.log('Server is running on the port 3000'),
   );
 }
 bootstrap();

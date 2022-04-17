@@ -1,0 +1,18 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  nickname: String!
+  email: String!
+  password: String!
+  loginType: String!
+  avatarURL: String!
+  snsId: String!
+  selfIntro: String!
+  location: String!
+}
+
+type Query {
+  users: [User!]!
+}
