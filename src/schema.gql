@@ -3,16 +3,43 @@
 # ------------------------------------------------------
 
 type User {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   nickname: String!
   email: String!
   password: String!
-  loginType: String!
+  accountType: AccountType!
   avatarURL: String!
   snsId: String!
   selfIntro: String!
   location: String!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum AccountType {
+  Local
+  Facebook
+  Google
+  Naver
+}
+
 type Query {
   users: [User!]!
+}
+
+type Mutation {
+  createUser(userInfo: createUserDTO!): User!
+}
+
+input createUserDTO {
+  nickname: String!
+  email: String!
+  password: String!
+  selfIntro: String!
+  location: String!
 }

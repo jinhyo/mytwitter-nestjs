@@ -10,7 +10,7 @@ import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
-    MorganModule,
+    // MorganModule,
     MyConfigModule,
     DatabaseModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -19,11 +19,11 @@ import { UserModule } from './modules/user/user.module';
     }),
     UserModule,
   ],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: MorganInterceptor('dev'),
-    },
-  ],
+  // providers: [
+  //   {
+  //     provide: APP_INTERCEPTOR,
+  //     useClass: MorganInterceptor('dev'),
+  //   },
+  // ],
 })
 export class AppModule {}

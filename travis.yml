@@ -16,4 +16,4 @@ script:
 notifications:
   email:
     recipients:
-      - '$EMAIL_ADDRESS'
+      - sosilion@naver.com
