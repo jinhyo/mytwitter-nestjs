@@ -20,7 +20,33 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async createUser(userInfo: CreateUserDTO): Promise<User> {
-    // 중복 이메일 검사
+    await this.checkDuplicateEmail(userInfo);
+
+    await this.checkDuplicateNickname(userInfo);
+
+    const avatarURL = await this.createInitialAvatar(userInfo.email);
+
+    return await this.userRepository.createUser(
+      userInfo,
+      AccountType.Local,
+      avatarURL,
+    );
+  }
+
+  private async checkDuplicateNickname(userInfo: CreateUserDTO) {
+    const userWithSameNickname = await this.userRepository.findUserByNickname(
+      userInfo.nickname,
+      {
+        select: ['id'],
+      },
+    );
+
+    if (userWithSameNickname) {
+      throw new ConflictException(DUPLICATE_USER_NICKNAME_MSG);
+    }
+  }
+
+  private async checkDuplicateEmail(userInfo: CreateUserDTO) {
     const userWithSameEmail = await this.userRepository.findUserByEmail(
       userInfo.email,
       AccountType.Local,
@@ -32,32 +58,6 @@ export class UserService {
     if (userWithSameEmail) {
       throw new ConflictException(DUPLICATE_USER_EMAIL_MSG);
     }
-
-    // 중복 닉네임 검사
-    const userWithSameNickname = await this.userRepository.findUserByNickname(
-      userInfo.nickname,
-      {
-        select: ['id'],
-      },
-    );
-
-    if (userWithSameNickname) {
-      throw new ConflictException(DUPLICATE_USER_NICKNAME_MSG);
-    }
-
-    const avatarURL = await this.createInitialAvatar(userInfo.email);
-
-    const result = await this.userRepository.createUser(
-      userInfo,
-      AccountType.Local,
-      avatarURL,
-    );
-    console.log(
-      '🚀 ~ file: user.service.ts ~ line 61 ~ UserService ~ createUser ~ result',
-      result,
-    );
-
-    return result;
   }
 
   private async createInitialAvatar(email: string) /* : Promise<string> */ {
