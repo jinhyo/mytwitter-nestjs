@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -12,12 +13,21 @@ import {
   CREATING_AVATAR_IMG_FAILED_MSG,
   DUPLICATE_USER_EMAIL_MSG,
   DUPLICATE_USER_NICKNAME_MSG,
+  NO_SUCH_EMAIL_USER_MSG,
 } from 'src/commonConstants/errorMsgs/serviceErrorMsgs';
 import { AccountType } from 'src/enums/accountType.enum';
+import { LoginDTO } from './dtos/login.dto';
+import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
+import { MyJwtService } from '../my-jwt/my-jwt.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly configService: ConfigService,
+    private readonly myJwtService: MyJwtService,
+  ) {}
 
   async createUser(userInfo: CreateUserDTO): Promise<User> {
     await this.checkDuplicateEmail(userInfo);
@@ -33,7 +43,30 @@ export class UserService {
     );
   }
 
-  private async checkDuplicateNickname(userInfo: CreateUserDTO) {
+  async login({ email, password }: LoginDTO, res: Response): Promise<User> {
+    const user = await this.userRepository.findUserByEmail(
+      email,
+      AccountType.Local,
+    );
+
+    this.isExistenUserEmail(user);
+
+    await user.isCorrectPwd(password);
+    user.password = undefined;
+
+    const jwtToken = this.myJwtService.createJwtToken(user.id);
+
+    this.setCookieWithJwt(res, jwtToken);
+
+    return user;
+  }
+
+  // PRIVATE FUNCTIONS
+
+  /** @desc 중복 닉네임 인지 확인 */
+  private async checkDuplicateNickname(
+    userInfo: CreateUserDTO,
+  ): Promise<void | never> {
     const userWithSameNickname = await this.userRepository.findUserByNickname(
       userInfo.nickname,
       {
@@ -46,7 +79,10 @@ export class UserService {
     }
   }
 
-  private async checkDuplicateEmail(userInfo: CreateUserDTO) {
+  /** @desc 중복 이메일 인지 확인 */
+  private async checkDuplicateEmail(
+    userInfo: CreateUserDTO,
+  ): Promise<void | never> {
     const userWithSameEmail = await this.userRepository.findUserByEmail(
       userInfo.email,
       AccountType.Local,
@@ -60,7 +96,8 @@ export class UserService {
     }
   }
 
-  private async createInitialAvatar(email: string) /* : Promise<string> */ {
+  /** @desc 초기 아바타 사진 생성 */
+  private async createInitialAvatar(email: string): Promise<string | never> {
     try {
       const {
         config: { url: avatarURL },
@@ -68,14 +105,30 @@ export class UserService {
         `http://gravatar.com/avatar/${md5(email)}?d=identicon`,
       );
 
-      console.log(
-        '🚀 ~ file: user.service.ts ~ line 72 ~ UserService ~ createInitialAvatar ~ avatarURL',
-        avatarURL,
-      );
-
       return avatarURL;
     } catch (error) {
       throw new InternalServerErrorException(CREATING_AVATAR_IMG_FAILED_MSG);
     }
+  }
+
+  /** @desc 가입된 이메일인지 확인 */
+  private isExistenUserEmail(user: User): void | never {
+    if (!user) {
+      throw new BadRequestException(NO_SUCH_EMAIL_USER_MSG);
+    }
+  }
+
+  /** @desc 쿠키에 jwt 토큰 추가 */
+  private setCookieWithJwt(res: Response, token: string): void {
+    const NODE_ENV = this.configService.get('NODE_ENV');
+
+    const SEVEN_DAYS = 1000 * 60 * 60 * 24 * 7;
+    const TWELVE_HOURS = 1000 * 60 * 60 * 12;
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: NODE_ENV === 'dev' ? false : true,
+      maxAge: NODE_ENV === 'dev' ? SEVEN_DAYS : TWELVE_HOURS,
+    });
   }
 }

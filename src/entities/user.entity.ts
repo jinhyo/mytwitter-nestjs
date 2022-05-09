@@ -12,13 +12,22 @@ import {
   IsOptional,
   IsString,
   Length,
-  Max,
 } from 'class-validator';
 import { IsNotWhiteSpace } from 'src/decorators/isNotWhiteSpace.decorator';
 import bcrypt from 'bcrypt';
-import { HASHING_PASSWORD_FAILED_MSG } from 'src/commonConstants/errorMsgs/entityFunctionErrorMsgs';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  HASHING_PASSWORD_FAILED_MSG,
+  NOT_EXACT_PASSWORD_MSG,
+  PASSWORD_CHECKING_FAILED_MSG,
+} from 'src/commonConstants/errorMsgs/entityFunctionErrorMsgs';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { AccountType } from 'src/enums/accountType.enum';
+
+const logger = new Logger('User Entity');
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -86,13 +95,30 @@ export class User extends StandardEntity {
   @OneToMany(() => UserLike, (like) => like.user)
   likes: UserLike[];
 
-  @BeforeInsert() // userRepos.create() 단계에서 만들어지고난 다음에 userRepos.save()됨
+  @BeforeInsert()
   async hashPassword() {
     try {
       this.password = await bcrypt.hash(this.password, 12);
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(HASHING_PASSWORD_FAILED_MSG);
+    }
+  }
+
+  /** @desc 비밀번호가 맞는지 확인 */
+  async isCorrectPwd(inputPwd: string): Promise<void | never> {
+    let exactPwd: boolean;
+    try {
+      exactPwd = await bcrypt.compare(inputPwd, this.password);
+    } catch (error) {
+      logger.error(
+        `isCorrectPwd() in User Entity failed - error detail : ${error.message}`,
+      );
+      throw new InternalServerErrorException(PASSWORD_CHECKING_FAILED_MSG);
+    }
+
+    if (!exactPwd) {
+      throw new BadRequestException(NOT_EXACT_PASSWORD_MSG);
     }
   }
 }

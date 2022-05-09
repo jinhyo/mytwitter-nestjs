@@ -20,8 +20,10 @@ export class UserRepository extends Repository<User> {
     accountType: AccountType,
     avatarURL: string,
   ): Promise<User> {
+    const user = this.create({ ...userInfo, accountType, avatarURL });
+
     try {
-      return await this.save({ ...userInfo, accountType, avatarURL });
+      return await this.save(user);
     } catch (error) {
       this.logger.error(
         `createUser() failed - error detail : ${error.message}`,
@@ -77,6 +79,32 @@ export class UserRepository extends Repository<User> {
     } catch (error) {
       this.logger.error(
         `findUserByNickname() failed - error detail : ${error.message}`,
+      );
+      throw new InternalServerErrorException(FINDING_USER_FAILED_MSG);
+    }
+  }
+
+  async findUserById(
+    userId: number,
+    findOption: UserSearchOption = null,
+  ): Promise<User> {
+    const query = this.createQueryBuilder(this.entityName).where({
+      id: userId,
+    });
+
+    if (findOption?.select) {
+      const userSelector = makeQuerySelector(
+        this.entityName,
+        findOption.select,
+      );
+      query.select(userSelector);
+    }
+
+    try {
+      return await query.getOne();
+    } catch (error) {
+      this.logger.error(
+        `findUserById() failed - error detail : ${error.message}`,
       );
       throw new InternalServerErrorException(FINDING_USER_FAILED_MSG);
     }

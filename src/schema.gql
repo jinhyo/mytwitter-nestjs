@@ -29,7 +29,13 @@ enum AccountType {
 }
 
 type Query {
-  users: [User!]!
+  user: User!
+  login(userInfo: LoginDTO!): User!
+}
+
+input LoginDTO {
+  email: String!
+  password: String!
 }
 
 type Mutation {
