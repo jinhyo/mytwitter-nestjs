@@ -33,10 +33,10 @@ type Query {
 }
 
 type Mutation {
-  createUser(userInfo: createUserDTO!): User!
+  createUser(userInfo: CreateUserDTO!): User!
 }
 
-input createUserDTO {
+input CreateUserDTO {
   nickname: String!
   email: String!
   password: String!

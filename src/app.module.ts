@@ -22,7 +22,7 @@ import { UserModule } from './modules/user/user.module';
   // providers: [
   //   {
   //     provide: APP_INTERCEPTOR,
-  //     useClass: MorganInterceptor('dev'),
+  //     useClass: MorganInterceptor('combined'),
   //   },
   // ],
 })

@@ -1,12 +1,17 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
-import { createUserDTO } from './dtos/createUser.dto';
+import { CreateUserDTO } from './dtos/createUser.dto';
 import axios from 'axios';
 import md5 from 'md5';
 import { UserRepository } from 'src/repositories/userRepository';
 import {
-  DUPLICATE_USER_EMAIL,
-  DUPLICATE_USER_NICKNAME,
+  CREATING_AVATAR_IMG_FAILED_MSG,
+  DUPLICATE_USER_EMAIL_MSG,
+  DUPLICATE_USER_NICKNAME_MSG,
 } from 'src/commonConstants/errorMsgs/serviceErrorMsgs';
 import { AccountType } from 'src/enums/accountType.enum';
 
@@ -14,7 +19,7 @@ import { AccountType } from 'src/enums/accountType.enum';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async createUser(userInfo: createUserDTO): Promise<User> {
+  async createUser(userInfo: CreateUserDTO): Promise<User> {
     // 중복 이메일 검사
     const userWithSameEmail = await this.userRepository.findUserByEmail(
       userInfo.email,
@@ -25,7 +30,7 @@ export class UserService {
     );
 
     if (userWithSameEmail) {
-      throw new ConflictException(DUPLICATE_USER_EMAIL);
+      throw new ConflictException(DUPLICATE_USER_EMAIL_MSG);
     }
 
     // 중복 닉네임 검사
@@ -37,22 +42,40 @@ export class UserService {
     );
 
     if (userWithSameNickname) {
-      throw new ConflictException(DUPLICATE_USER_NICKNAME);
+      throw new ConflictException(DUPLICATE_USER_NICKNAME_MSG);
     }
 
-    // 초기 아바타 생성
-    const {
-      config: { url: avatarURL },
-    } = await axios.get(
-      `http://gravatar.com/avatar/${md5(userInfo.email)}?d=identicon`,
+    const avatarURL = await this.createInitialAvatar(userInfo.email);
+
+    const result = await this.userRepository.createUser(
+      userInfo,
+      AccountType.Local,
+      avatarURL,
+    );
+    console.log(
+      '🚀 ~ file: user.service.ts ~ line 61 ~ UserService ~ createUser ~ result',
+      result,
     );
 
-    const user = this.userRepository.create({
-      ...userInfo,
-      accountType: AccountType.Local,
-      avatarURL,
-    });
+    return result;
+  }
 
-    return await this.userRepository.createUser(user);
+  private async createInitialAvatar(email: string) /* : Promise<string> */ {
+    try {
+      const {
+        config: { url: avatarURL },
+      } = await axios.get(
+        `http://gravatar.com/avatar/${md5(email)}?d=identicon`,
+      );
+
+      console.log(
+        '🚀 ~ file: user.service.ts ~ line 72 ~ UserService ~ createInitialAvatar ~ avatarURL',
+        avatarURL,
+      );
+
+      return avatarURL;
+    } catch (error) {
+      throw new InternalServerErrorException(CREATING_AVATAR_IMG_FAILED_MSG);
+    }
   }
 }

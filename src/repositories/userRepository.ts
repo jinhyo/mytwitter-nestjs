@@ -6,6 +6,7 @@ import {
 import { User } from 'src/entities/user.entity';
 import { AccountType } from 'src/enums/accountType.enum';
 import { makeQuerySelector } from 'src/libs/makeQuerySelector';
+import { CreateUserDTO } from 'src/modules/user/dtos/createUser.dto';
 import { UserSearchOption } from 'src/modules/user/types/userSearchOption.interface';
 import { EntityRepository, Repository } from 'typeorm';
 
@@ -14,9 +15,13 @@ export class UserRepository extends Repository<User> {
   private readonly logger = new Logger('UserRepository');
   private readonly entityName = User.name;
 
-  async createUser(userInfo: User): Promise<User> {
+  async createUser(
+    userInfo: CreateUserDTO,
+    accountType: AccountType,
+    avatarURL: string,
+  ): Promise<User> {
     try {
-      return await this.save(userInfo);
+      return await this.save({ ...userInfo, accountType, avatarURL });
     } catch (error) {
       this.logger.error(
         `createUser() failed - error detail : ${error.message}`,

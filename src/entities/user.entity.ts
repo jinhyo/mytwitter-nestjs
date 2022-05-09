@@ -16,7 +16,7 @@ import {
 } from 'class-validator';
 import { IsNotWhiteSpace } from 'src/decorators/isNotWhiteSpace.decorator';
 import bcrypt from 'bcrypt';
-import { HASHING_PASSWORD_FAILED } from 'src/commonConstants/errorMsgs/entityFunctionErrorMsgs';
+import { HASHING_PASSWORD_FAILED_MSG } from 'src/commonConstants/errorMsgs/entityFunctionErrorMsgs';
 import { InternalServerErrorException } from '@nestjs/common';
 import { AccountType } from 'src/enums/accountType.enum';
 
@@ -92,7 +92,7 @@ export class User extends StandardEntity {
       this.password = await bcrypt.hash(this.password, 12);
     } catch (error) {
       console.error(error);
-      throw new InternalServerErrorException(HASHING_PASSWORD_FAILED);
+      throw new InternalServerErrorException(HASHING_PASSWORD_FAILED_MSG);
     }
   }
 }
