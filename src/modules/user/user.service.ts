@@ -20,6 +20,7 @@ import { LoginDTO } from './dtos/login.dto';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { MyJwtService } from '../my-jwt/my-jwt.service';
+import { AvailableDTO } from 'src/commonDTOs/available.dto';
 
 @Injectable()
 export class UserService {
@@ -59,6 +60,15 @@ export class UserService {
     this.setCookieWithJwt(res, jwtToken);
 
     return user;
+  }
+
+  async isDuplicateNickname(nickname: string): Promise<AvailableDTO> {
+    const existingNickname = await this.userRepository.findUserByNickname(
+      nickname,
+      { select: ['id'] },
+    );
+
+    return { isAvailable: existingNickname ? false : true };
   }
 
   // PRIVATE FUNCTIONS

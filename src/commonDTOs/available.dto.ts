@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class SuccessDTO {
+export class AvailableDTO {
   @Field()
-  isSuccess: boolean;
+  isAvailable: boolean;
 }

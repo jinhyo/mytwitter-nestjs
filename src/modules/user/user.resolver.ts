@@ -1,6 +1,6 @@
-import { Res, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Response } from 'express';
+import { AvailableDTO } from 'src/commonDTOs/available.dto';
 import { SuccessDTO } from 'src/commonDTOs/success.dto';
 import { LoginUser } from 'src/decorators/loginUser.decorator';
 import { User } from 'src/entities/user.entity';
@@ -13,25 +13,32 @@ import { UserService } from './user.service';
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Query(() => SuccessDTO)
-  @UseGuards(LoginGuard)
-  logout(@Context() context): SuccessDTO {
-    context.res.cookie('token', '', { maxAge: 0 });
-    return { success: true };
-  }
-
   @Query(() => User)
   @UseGuards(LoginGuard)
   me(@LoginUser() loginUser: User) {
     return loginUser;
   }
 
-  @Query(() => User)
+  @Mutation(() => SuccessDTO)
+  @UseGuards(LoginGuard)
+  logout(@Context() context): SuccessDTO {
+    context.res.cookie('token', '', { maxAge: 0 });
+    return { isSuccess: true };
+  }
+
+  @Mutation(() => User)
   login(
     @Args('userInfo') userInfo: LoginDTO,
     @Context() context,
   ): Promise<User> {
     return this.userService.login(userInfo, context.res);
+  }
+
+  @Mutation(() => AvailableDTO)
+  isDuplicateNickname(
+    @Args('nickname') nickname: string,
+  ): Promise<AvailableDTO> {
+    return this.userService.isDuplicateNickname(nickname);
   }
 
   @Mutation(() => User)

@@ -28,23 +28,28 @@ enum AccountType {
   Naver
 }
 
+type AvailableDTO {
+  isAvailable: Boolean!
+}
+
 type SuccessDTO {
-  success: Boolean!
+  isSuccess: Boolean!
 }
 
 type Query {
-  logout: SuccessDTO!
   me: User!
+}
+
+type Mutation {
+  logout: SuccessDTO!
   login(userInfo: LoginDTO!): User!
+  isDuplicateNickname(nickname: String!): AvailableDTO!
+  createUser(userInfo: CreateUserDTO!): User!
 }
 
 input LoginDTO {
   email: String!
   password: String!
-}
-
-type Mutation {
-  createUser(userInfo: CreateUserDTO!): User!
 }
 
 input CreateUserDTO {
