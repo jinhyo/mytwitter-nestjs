@@ -1,8 +1,7 @@
-.env.dev
-
 # compiled output
 /dist
 /node_modules
+.env.dev
 
 # Logs
 logs

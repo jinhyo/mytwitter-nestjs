@@ -1,30 +1,36 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
+import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { DatabaseModule } from './modules/database/database.module';
 import { MyConfigModule } from './modules/my-config/my-config.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
-    // MorganModule,
     MyConfigModule,
     DatabaseModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      context: ({ res }) => ({
+      context: ({ req, res }) => ({
+        req,
         res,
       }),
     }),
     UserModule,
   ],
-  // providers: [
-  //   {
-  //     provide: APP_INTERCEPTOR,
-  //     useClass: MorganInterceptor('combined'),
-  //   },
-  // ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
