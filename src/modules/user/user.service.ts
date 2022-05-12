@@ -21,6 +21,8 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { MyJwtService } from '../my-jwt/my-jwt.service';
 import { AvailableDTO } from 'src/commonDTOs/available.dto';
+import { changeProfileInfoDTO } from './dtos/changeProfileInfo.dto';
+import { SuccessDTO } from 'src/commonDTOs/success.dto';
 
 @Injectable()
 export class UserService {
@@ -31,9 +33,9 @@ export class UserService {
   ) {}
 
   async createUser(userInfo: CreateUserDTO): Promise<User> {
-    await this.checkDuplicateEmail(userInfo);
+    await this.checkDuplicateEmail(userInfo.email);
 
-    await this.checkDuplicateNickname(userInfo);
+    await this.checkDuplicateNickname(userInfo.nickname);
 
     const avatarURL = await this.createInitialAvatar(userInfo.email);
 
@@ -81,14 +83,25 @@ export class UserService {
     return { isAvailable: existingEmail ? false : true };
   }
 
+  async changeProfileInfo(
+    loginUserId: number,
+    userInfo: changeProfileInfoDTO,
+  ): Promise<SuccessDTO> {
+    await this.checkDuplicateNickname(userInfo.nickname);
+
+    await this.userRepository.updateUser(loginUserId, { ...userInfo });
+
+    return { isSuccess: true };
+  }
+
   // PRIVATE FUNCTIONS
 
   /** @desc 중복 닉네임 인지 확인 */
   private async checkDuplicateNickname(
-    userInfo: CreateUserDTO,
+    nickname: string,
   ): Promise<void | never> {
     const userWithSameNickname = await this.userRepository.findUserByNickname(
-      userInfo.nickname,
+      nickname,
       {
         select: ['id'],
       },
@@ -100,11 +113,9 @@ export class UserService {
   }
 
   /** @desc 중복 이메일 인지 확인 */
-  private async checkDuplicateEmail(
-    userInfo: CreateUserDTO,
-  ): Promise<void | never> {
+  private async checkDuplicateEmail(email: string): Promise<void | never> {
     const userWithSameEmail = await this.userRepository.findUserByEmail(
-      userInfo.email,
+      email,
       AccountType.Local,
       {
         select: ['id'],

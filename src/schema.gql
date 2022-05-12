@@ -46,6 +46,7 @@ type Mutation {
   createUser(userInfo: CreateUserDTO!): User!
   isDuplicateNickname(nickname: String!): AvailableDTO!
   isDuplicateEmail(email: String!): AvailableDTO!
+  changeProfileInfo(userInfo: changeProfileInfoDTO!): SuccessDTO!
 }
 
 input LoginDTO {
@@ -57,6 +58,12 @@ input CreateUserDTO {
   nickname: String!
   email: String!
   password: String!
+  selfIntro: String!
+  location: String!
+}
+
+input changeProfileInfoDTO {
+  nickname: String!
   selfIntro: String!
   location: String!
 }

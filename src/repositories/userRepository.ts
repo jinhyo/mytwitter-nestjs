@@ -2,6 +2,7 @@ import { InternalServerErrorException, Logger } from '@nestjs/common';
 import {
   CREATING_USERS_FAILED_MSG,
   FINDING_USER_FAILED_MSG,
+  UPDATING_USER_INFO_FAILED_MSG,
 } from 'src/commonConstants/errorMsgs/repositoryErrorMsgs';
 import { User } from 'src/entities/user.entity';
 import { AccountType } from 'src/enums/accountType.enum';
@@ -29,6 +30,20 @@ export class UserRepository extends Repository<User> {
         `createUser() failed - error detail : ${error.message}`,
       );
       throw new InternalServerErrorException(CREATING_USERS_FAILED_MSG);
+    }
+  }
+
+  async updateUser(
+    userId: number,
+    userInfo: Partial<User>,
+  ): Promise<void | never> {
+    try {
+      await this.update(userId, userInfo);
+    } catch (error) {
+      this.logger.error(
+        `updateUser() failed - error detail : ${error.message}`,
+      );
+      throw new InternalServerErrorException(UPDATING_USER_INFO_FAILED_MSG);
     }
   }
 

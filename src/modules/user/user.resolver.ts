@@ -5,6 +5,7 @@ import { SuccessDTO } from 'src/commonDTOs/success.dto';
 import { LoginUser } from 'src/decorators/loginUser.decorator';
 import { User } from 'src/entities/user.entity';
 import { LoginGuard } from 'src/guards/login.guard';
+import { changeProfileInfoDTO } from './dtos/changeProfileInfo.dto';
 import { CreateUserDTO } from './dtos/createUser.dto';
 import { LoginDTO } from './dtos/login.dto';
 import { UserService } from './user.service';
@@ -49,5 +50,14 @@ export class UserResolver {
   @Mutation(() => AvailableDTO)
   isDuplicateEmail(@Args('email') email: string): Promise<AvailableDTO> {
     return this.userService.isDuplicateEmail(email);
+  }
+
+  @Mutation(() => SuccessDTO)
+  @UseGuards(LoginGuard)
+  changeProfileInfo(
+    @LoginUser('id') loginUserId: number,
+    @Args('userInfo') userInfo: changeProfileInfoDTO,
+  ): Promise<SuccessDTO> {
+    return this.userService.changeProfileInfo(loginUserId, userInfo);
   }
 }
