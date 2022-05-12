@@ -43,8 +43,9 @@ type Query {
 type Mutation {
   logout: SuccessDTO!
   login(userInfo: LoginDTO!): User!
-  isDuplicateNickname(nickname: String!): AvailableDTO!
   createUser(userInfo: CreateUserDTO!): User!
+  isDuplicateNickname(nickname: String!): AvailableDTO!
+  isDuplicateEmail(email: String!): AvailableDTO!
 }
 
 input LoginDTO {

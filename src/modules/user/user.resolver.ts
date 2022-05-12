@@ -34,6 +34,11 @@ export class UserResolver {
     return this.userService.login(userInfo, context.res);
   }
 
+  @Mutation(() => User)
+  createUser(@Args('userInfo') userInfo: CreateUserDTO): Promise<User> {
+    return this.userService.createUser(userInfo);
+  }
+
   @Mutation(() => AvailableDTO)
   isDuplicateNickname(
     @Args('nickname') nickname: string,
@@ -41,8 +46,8 @@ export class UserResolver {
     return this.userService.isDuplicateNickname(nickname);
   }
 
-  @Mutation(() => User)
-  createUser(@Args('userInfo') userInfo: CreateUserDTO): Promise<User> {
-    return this.userService.createUser(userInfo);
+  @Mutation(() => AvailableDTO)
+  isDuplicateEmail(@Args('email') email: string): Promise<AvailableDTO> {
+    return this.userService.isDuplicateEmail(email);
   }
 }

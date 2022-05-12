@@ -71,6 +71,16 @@ export class UserService {
     return { isAvailable: existingNickname ? false : true };
   }
 
+  async isDuplicateEmail(email: string): Promise<AvailableDTO> {
+    const existingEmail = await this.userRepository.findUserByEmail(
+      email,
+      AccountType.Local,
+      { select: ['id'] },
+    );
+
+    return { isAvailable: existingEmail ? false : true };
+  }
+
   // PRIVATE FUNCTIONS
 
   /** @desc 중복 닉네임 인지 확인 */
