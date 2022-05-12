@@ -28,7 +28,12 @@ enum AccountType {
   Naver
 }
 
+type SuccessDTO {
+  success: Boolean!
+}
+
 type Query {
+  logout: SuccessDTO!
   me: User!
   login(userInfo: LoginDTO!): User!
 }
