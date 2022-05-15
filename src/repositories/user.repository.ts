@@ -102,7 +102,7 @@ export class UserRepository extends Repository<User> {
   async findUserById(
     userId: number,
     findOption: UserSearchOption = null,
-  ): Promise<User> {
+  ): Promise<User | never> {
     const query = this.createQueryBuilder(this.entityName).where({
       id: userId,
     });
@@ -121,6 +121,7 @@ export class UserRepository extends Repository<User> {
       this.logger.error(
         `findUserById() failed - error detail : ${error.message}`,
       );
+
       throw new InternalServerErrorException(FINDING_USER_FAILED_MSG);
     }
   }

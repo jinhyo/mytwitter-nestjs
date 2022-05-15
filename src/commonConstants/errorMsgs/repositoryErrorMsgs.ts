@@ -7,3 +7,7 @@ export const UPDATING_USER_INFO_FAILED_MSG =
 // UserRelation
 export const CREATING_USER_RELRATION_FAILED_MSG =
   '유저 관계를 생성하는데 실패 했습니다.';
+export const FINDING_USER_RELRATION_FAILED_MSG =
+  '유저 관계를 찾는데 실패 했습니다.';
+export const DELETING_USER_RELRATION_FAILED_MSG =
+  '유저 관계를 삭제하는데 실패 했습니다.';

@@ -91,4 +91,13 @@ export class UserResolver {
   ): Promise<UserRelation> {
     return this.userService.followUser(loginUserId, userId);
   }
+
+  @Mutation(() => SuccessDTO)
+  @UseGuards(LoginGuard)
+  unFollowUser(
+    @LoginUser('id') loginUserId: number,
+    @Args('userId', { type: () => Int }) userId: number,
+  ): Promise<SuccessDTO> {
+    return this.userService.unFollowUser(loginUserId, userId);
+  }
 }

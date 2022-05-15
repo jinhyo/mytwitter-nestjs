@@ -14,8 +14,10 @@ import {
   DUPLICATE_USER_EMAIL_MSG,
   DUPLICATE_USER_NICKNAME_MSG,
   FOLLOWING_MYSELF_IS_NOT_ALLOWED_MSG,
+  IM_NOT_FOLLOWING_USER_MSG,
   NO_SUCH_EMAIL_USER_MSG,
   NO_SUCH_USER_MSG,
+  UNFOLLOWING_MYSELF_IS_NOT_ALLOWED_MSG,
 } from 'src/commonConstants/errorMsgs/serviceErrorMsgs';
 import { AccountType } from 'src/enums/accountType.enum';
 import { LoginDTO } from './dtos/login.dto';
@@ -123,7 +125,45 @@ export class UserService {
     );
   }
 
+  async unFollowUser(loginUserId: number, userId: number): Promise<SuccessDTO> {
+    this.checkUnFollowingAnother(loginUserId, userId);
+
+    await this.checkUserExistence(userId);
+
+    await this.checkImFollowingUser(loginUserId, userId);
+
+    await this.userRelationRepository.deleteUserRelation(loginUserId, userId);
+
+    return { isSuccess: true };
+  }
+
   // PRIVATE FUNCTIONS
+
+  /** @desc 해당 유저를 팔로우 하고 있는지 확인한다. */
+  private async checkImFollowingUser(
+    loginUserId: number,
+    userId: number,
+  ): Promise<void | never> {
+    const userRelation = await this.userRelationRepository.findUserRelation(
+      loginUserId,
+      userId,
+      { select: ['followerId'] },
+    );
+
+    if (!userRelation) {
+      throw new BadRequestException(IM_NOT_FOLLOWING_USER_MSG);
+    }
+  }
+
+  /** @desc 내가 아닌 다른 사람을 언팔로우 하는지 확인한다. */
+  private checkUnFollowingAnother(
+    loginUserId: number,
+    userId: number,
+  ): void | never {
+    if (loginUserId === userId) {
+      throw new BadRequestException(UNFOLLOWING_MYSELF_IS_NOT_ALLOWED_MSG);
+    }
+  }
 
   /** @desc 존재하는 유저인지 확인한다. */
   private async checkUserExistence(userId: number): Promise<void | never> {

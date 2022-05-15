@@ -7,8 +7,12 @@ export const NO_SUCH_EMAIL_USER_MSG = '해당 이메일로 가입된 계정이 �
 export const NO_SUCH_USER_MSG = '존재하지 않는 유저입니다.';
 export const FOLLOWING_MYSELF_IS_NOT_ALLOWED_MSG =
   '자기 자신을 팔로우 할 수 없습니다.';
+export const UNFOLLOWING_MYSELF_IS_NOT_ALLOWED_MSG =
+  '자기 자신을 언팔로우 할 수 없습니다.';
+export const IM_NOT_FOLLOWING_USER_MSG =
+  '해당 유저를 팔로우 하고 있지 않습니다.';
 
-/// - MyJwt Service
+// MyJwt Service
 export const VERIFYING_JWT_FAILED_MSG = 'JWT 토큰을 검증하는데 실패 했습니다.';
 
 // S3 Servoce
