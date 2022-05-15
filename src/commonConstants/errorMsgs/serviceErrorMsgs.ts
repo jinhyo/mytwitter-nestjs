@@ -8,3 +8,6 @@ export const NO_SUCH_EMAIL_USER_MSG = '해당 이메일로 가입된 계정이 �
 
 /// - MyJwt Service
 export const VERIFYING_JWT_FAILED_MSG = 'JWT 토큰을 검증하는데 실패 했습니다.';
+
+// S3 Servoce
+export const FILE_UPLOAD_FAILED_MSG = '파일 업로드에 실패했습니다.';

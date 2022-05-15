@@ -1,10 +1,13 @@
-import { UseGuards } from '@nestjs/common';
+import { Param, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { AvailableDTO } from 'src/commonDTOs/available.dto';
 import { SuccessDTO } from 'src/commonDTOs/success.dto';
 import { LoginUser } from 'src/decorators/loginUser.decorator';
 import { User } from 'src/entities/user.entity';
 import { LoginGuard } from 'src/guards/login.guard';
+import { LoggerInterceptor } from 'src/interceptors/logger.interceptor';
+import { ImageFileValidationPipe } from 'src/pipes/imageFileValidation.pipe';
 import { changeProfileInfoDTO } from './dtos/changeProfileInfo.dto';
 import { CreateUserDTO } from './dtos/createUser.dto';
 import { LoginDTO } from './dtos/login.dto';
@@ -59,5 +62,18 @@ export class UserResolver {
     @Args('userInfo') userInfo: changeProfileInfoDTO,
   ): Promise<SuccessDTO> {
     return this.userService.changeProfileInfo(loginUserId, userInfo);
+  }
+
+  @Mutation(() => SuccessDTO)
+  @UseGuards(LoginGuard)
+  changeAvatarImg(
+    @LoginUser('id') loginUserId: number,
+    @Args(
+      { name: 'avatarImg', type: () => GraphQLUpload },
+      new ImageFileValidationPipe({ fileSize: 10 * 1024 * 1024 }),
+    )
+    imgFile: FileUpload,
+  ): Promise<SuccessDTO> {
+    return this.userService.changeAvatarImg(loginUserId, imgFile);
   }
 }

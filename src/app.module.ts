@@ -6,6 +6,7 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLFormattedError } from 'graphql';
 import { join } from 'path';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { DatabaseModule } from './modules/database/database.module';
@@ -18,6 +19,9 @@ import { UserModule } from './modules/user/user.module';
     DatabaseModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      formatError: (error) => {
+        return error.extensions.response as GraphQLFormattedError;
+      },
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       context: ({ res }) => ({
         res,
@@ -30,6 +34,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
+      .forRoutes({ path: '*', method: RequestMethod.POST });
   }
 }

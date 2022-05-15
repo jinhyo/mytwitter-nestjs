@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
-import { LOGIN_IS_NEEDED_MSG } from 'src/commonConstants/errorMsgs/guardErrorMsgs';
+import { LOGIN_IS_NEEDED_MSG } from 'src/commonConstants/errorMsgs/etcErrorMsgs';
 
 @Injectable()
 export class LoginGuard extends AuthGuard('jwt') {

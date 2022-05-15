@@ -47,6 +47,7 @@ type Mutation {
   isDuplicateNickname(nickname: String!): AvailableDTO!
   isDuplicateEmail(email: String!): AvailableDTO!
   changeProfileInfo(userInfo: changeProfileInfoDTO!): SuccessDTO!
+  changeAvatarImg(avatarImg: Upload!): SuccessDTO!
 }
 
 input LoginDTO {
@@ -67,3 +68,6 @@ input changeProfileInfoDTO {
   selfIntro: String!
   location: String!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload

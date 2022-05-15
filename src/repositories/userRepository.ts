@@ -6,7 +6,7 @@ import {
 } from 'src/commonConstants/errorMsgs/repositoryErrorMsgs';
 import { User } from 'src/entities/user.entity';
 import { AccountType } from 'src/enums/accountType.enum';
-import { makeQuerySelector } from 'src/libs/makeQuerySelector';
+import { makeQuerySelector } from 'src/libs/makeQuerySelector.lib';
 import { CreateUserDTO } from 'src/modules/user/dtos/createUser.dto';
 import { UserSearchOption } from 'src/modules/user/types/userSearchOption.interface';
 import { EntityRepository, Repository } from 'typeorm';

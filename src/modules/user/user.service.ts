@@ -23,6 +23,8 @@ import { MyJwtService } from '../my-jwt/my-jwt.service';
 import { AvailableDTO } from 'src/commonDTOs/available.dto';
 import { changeProfileInfoDTO } from './dtos/changeProfileInfo.dto';
 import { SuccessDTO } from 'src/commonDTOs/success.dto';
+import { S3Service } from '../S3/S3.service';
+import { FileUpload } from 'graphql-upload';
 
 @Injectable()
 export class UserService {
@@ -30,6 +32,7 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly configService: ConfigService,
     private readonly myJwtService: MyJwtService,
+    private readonly s3Service: S3Service,
   ) {}
 
   async createUser(userInfo: CreateUserDTO): Promise<User> {
@@ -90,6 +93,17 @@ export class UserService {
     await this.checkDuplicateNickname(userInfo.nickname);
 
     await this.userRepository.updateUser(loginUserId, { ...userInfo });
+
+    return { isSuccess: true };
+  }
+
+  async changeAvatarImg(
+    userId: number,
+    imgFile: FileUpload,
+  ): Promise<SuccessDTO> {
+    const avatarURL = await this.s3Service.uploadAvatarImg(userId, imgFile);
+
+    await this.userRepository.updateUser(userId, { avatarURL });
 
     return { isSuccess: true };
   }

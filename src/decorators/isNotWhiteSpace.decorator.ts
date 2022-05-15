@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { WHITE_SPACE_IS_NOT_ALLOWED_MSG } from 'src/commonConstants/errorMsgs/validationErrorMsgs';
+import { WHITE_SPACE_IS_NOT_ALLOWED_MSG } from 'src/commonConstants/errorMsgs/etcErrorMsgs';
 
 export function IsNotWhiteSpace(validationOptions?: ValidationOptions) {
   return function (object: Object, propertyName: string) {
