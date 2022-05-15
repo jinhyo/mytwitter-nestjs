@@ -1,12 +1,18 @@
-import { Param, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Param,
+  ParseIntPipe,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { AvailableDTO } from 'src/commonDTOs/available.dto';
 import { SuccessDTO } from 'src/commonDTOs/success.dto';
 import { LoginUser } from 'src/decorators/loginUser.decorator';
 import { User } from 'src/entities/user.entity';
+import { UserRelation } from 'src/entities/userRelation.entity';
 import { LoginGuard } from 'src/guards/login.guard';
-import { LoggerInterceptor } from 'src/interceptors/logger.interceptor';
 import { ImageFileValidationPipe } from 'src/pipes/imageFileValidation.pipe';
 import { changeProfileInfoDTO } from './dtos/changeProfileInfo.dto';
 import { CreateUserDTO } from './dtos/createUser.dto';
@@ -75,5 +81,14 @@ export class UserResolver {
     imgFile: FileUpload,
   ): Promise<SuccessDTO> {
     return this.userService.changeAvatarImg(loginUserId, imgFile);
+  }
+
+  @Mutation(() => UserRelation)
+  @UseGuards(LoginGuard)
+  followUser(
+    @LoginUser('id') loginUserId: number,
+    @Args('userId', { type: () => Int }) userId: number,
+  ): Promise<UserRelation> {
+    return this.userService.followUser(loginUserId, userId);
   }
 }

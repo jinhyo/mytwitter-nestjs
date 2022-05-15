@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserRepository } from 'src/repositories/userRepository';
+import { UserRepository } from 'src/repositories/user.repository';
 import { MyJwtService } from './my-jwt.service';
 import { JwtStrategy } from './passports/jwt.strategy';
 

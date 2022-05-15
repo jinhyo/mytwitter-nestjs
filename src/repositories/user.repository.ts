@@ -1,6 +1,6 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
 import {
-  CREATING_USERS_FAILED_MSG,
+  CREATING_USER_FAILED_MSG,
   FINDING_USER_FAILED_MSG,
   UPDATING_USER_INFO_FAILED_MSG,
 } from 'src/commonConstants/errorMsgs/repositoryErrorMsgs';
@@ -29,7 +29,7 @@ export class UserRepository extends Repository<User> {
       this.logger.error(
         `createUser() failed - error detail : ${error.message}`,
       );
-      throw new InternalServerErrorException(CREATING_USERS_FAILED_MSG);
+      throw new InternalServerErrorException(CREATING_USER_FAILED_MSG);
     }
   }
 

@@ -1,4 +1,4 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   CreateDateColumn,
   Entity,
@@ -9,17 +9,22 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity({ name: 'follows' })
-export class Follow {
+@ObjectType()
+@Entity({ name: 'user_relrations' })
+export class UserRelation {
+  @Field(() => Int)
   @PrimaryColumn()
   followerId: number;
 
+  @Field(() => Int)
   @PrimaryColumn()
   followingId: number;
 
+  @Field(() => Date)
   @CreateDateColumn()
   createdAt: Date;
 
+  @Field(() => Date)
   @UpdateDateColumn()
   updatedAt: Date;
 

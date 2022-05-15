@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
-import { Follow } from './follow.entity';
+import { UserRelation } from './userRelation.entity';
 import { UserLike } from './userLike.entity';
 import { StandardEntity } from './standard.entity';
 import { Tweet } from './tweet.entity';
@@ -83,11 +83,11 @@ export class User extends StandardEntity {
   @OneToMany(() => UserQuotedTweet, (userQuotedTweet) => userQuotedTweet.user)
   userQuotedTweets: UserQuotedTweet[];
 
-  @OneToMany(() => Follow, (follow) => follow.following)
-  followers: Follow[];
+  @OneToMany(() => UserRelation, (follow) => follow.following)
+  followers: UserRelation[];
 
-  @OneToMany(() => Follow, (follow) => follow.follower)
-  followings: Follow[];
+  @OneToMany(() => UserRelation, (follow) => follow.follower)
+  followings: UserRelation[];
 
   @OneToMany(() => Tweet, (tweet) => tweet.writer)
   tweets: Tweet[];

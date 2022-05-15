@@ -10,7 +10,7 @@ import {
   DUPLICATE_USER_NICKNAME_MSG,
 } from 'src/commonConstants/errorMsgs/serviceErrorMsgs';
 import { AccountType } from 'src/enums/accountType.enum';
-import { UserRepository } from 'src/repositories/userRepository';
+import { UserRepository } from 'src/repositories/user.repository';
 import { CreateUserDTO } from './dtos/createUser.dto';
 import { UserService } from './user.service';
 import { User } from 'src/entities/user.entity';
